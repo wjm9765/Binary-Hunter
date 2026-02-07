@@ -14,7 +14,7 @@ class DeepShapExplainer:
         self.model = model
         self.config = load_config()
         self.baseline_type = self.config['explainability']['deep_shap']['baseline']
-        self.approximation = self.config['explainability']['deep_shap']['approximation']
+        # self.approximation = self.config['explainability']['deep_shap']['approximation']
         
         # 데이터를 저장할 공간
         self.ref_activations = {}
@@ -22,7 +22,21 @@ class DeepShapExplainer:
         self.captured_indices = [] # selected chunks indices
         
         # Monkey Patch를 위한 원본 메서드 저장
-        from models.MalConv2_main.LowMemConv import LowMemConvBase
+        from LowMemConv import LowMemConvBase
+        
+
+
+# __all__ = [
+#     'MalConvGCT',
+#     'MalConv',
+#     'AvastConv',
+#     'MalConvML',
+#     'LowMemConvBase',
+#     'BinaryDataset',
+#     'RandomChunkSampler',
+# ]
+        
+        
         self.original_seq2fix = LowMemConvBase.seq2fix
 
     def _get_baseline_input(self, input_tensor):
@@ -45,7 +59,6 @@ class DeepShapExplainer:
               임베딩된 입력을 캡처하여 역전파 시 사용하기 위함.
         """
         # LowMemConv.py의 원본 로직을 그대로 가져오되, 필요한 정보를 self_instance._shap_data 에 저장
-        
         receptive_window, stride, out_channels = self_instance.determinRF()
         
         if x.shape[1] < receptive_window: 
@@ -120,7 +133,7 @@ class DeepShapExplainer:
     @contextmanager
     def _patch_model(self):
         """LowMemConvBase.seq2fix를 안전하게 패치하고 복구하는 컨텍스트 매니저"""
-        from models.MalConv2_main.LowMemConv import LowMemConvBase
+        from LowMemConv import LowMemConvBase
         original = LowMemConvBase.seq2fix
         LowMemConvBase.seq2fix = self._custom_seq2fix
         try:

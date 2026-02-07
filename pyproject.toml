@@ -8,6 +8,8 @@ dependencies = [
     "torch",
     "numpy",
     "pyyaml>=6.0.3",
+    "matplotlib",
+    "tqdm",
 ]
 
 [tool.hatch.build.targets.wheel]
